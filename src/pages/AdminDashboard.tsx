@@ -14,11 +14,13 @@ const AdminDashboard: React.FC = () => {
         totalAuctions: 0
     });
     const [chartData, setChartData] = useState<any>(null);
+    const [userCreationData, setUserCreationData] = useState<any>(null);
     const [, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (user?.role === 'admin') {
             fetchDashboardData();
+            fetchUserCreationAnalytics();
         }
     }, [user]);
 
@@ -73,6 +75,34 @@ const AdminDashboard: React.FC = () => {
             console.error('Error fetching dashboard data:', error);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const fetchUserCreationAnalytics = async () => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/users/creation-analytics`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            if (response.ok) {
+                const analyticsData = await response.json();
+                if (analyticsData.success && analyticsData.data) {
+                    setUserCreationData({
+                        labels: analyticsData.data.labels,
+                        datasets: [{
+                            label: 'New Users',
+                            data: analyticsData.data.data,
+                            borderColor: '#1A73E8',
+                            backgroundColor: 'rgba(26, 115, 232, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching user creation analytics:', error);
         }
     };
 
@@ -190,6 +220,58 @@ const AdminDashboard: React.FC = () => {
                                             beginAtZero: true,
                                             ticks: {
                                                 color: '#64748B'
+                                            },
+                                            grid: {
+                                                color: '#E5E7EB'
+                                            }
+                                        },
+                                        x: {
+                                            ticks: {
+                                                color: '#64748B'
+                                            },
+                                            grid: {
+                                                color: '#E5E7EB'
+                                            }
+                                        }
+                                    }
+                                }}
+                                style={{ height: '100%' }}
+                            />
+                        </div>
+                    </Card>
+                )}
+
+                {/* User Growth Analytics Chart */}
+                {userCreationData && userCreationData.labels && userCreationData.labels.length > 0 && (
+                    <Card title="User Growth Analytics" className="shadow-modern mb-6">
+                        <div className="w-full" style={{ height: '400px' }}>
+                            <Chart
+                                type="line"
+                                data={userCreationData}
+                                options={{
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            display: true,
+                                            position: 'top'
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: 'New User Registrations Over Time',
+                                            font: {
+                                                size: 16,
+                                                weight: 'bold'
+                                            },
+                                            color: '#1A73E8'
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            ticks: {
+                                                color: '#64748B',
+                                                stepSize: 1
                                             },
                                             grid: {
                                                 color: '#E5E7EB'

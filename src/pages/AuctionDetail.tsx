@@ -205,7 +205,7 @@ const AuctionDetail: React.FC = () => {
     if (!currentAuction) {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                {/* <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div> */}
             </div>
         );
     }
@@ -230,7 +230,7 @@ const AuctionDetail: React.FC = () => {
                 </div>
             </div>
 
-            <div className="max-w-6xl mx-auto py-6 ">
+            <div className="max-w-6xl mx-auto py-6 xl:px-0 px-4">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     {/* Main Content */}
                     <div className="lg:col-span-2">
@@ -252,7 +252,7 @@ const AuctionDetail: React.FC = () => {
                         {/* Auction Details */}
                         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
                             <div className="flex items-center justify-between mb-4">
-                                <h1 className="text-3xl font-bold text-gray-900">{currentAuction.title}</h1>
+                                <h1 className="text-3xl font-bold text-gray-900 px-0">{currentAuction.title}</h1>
                                 {user && currentAuction.seller && user._id !== currentAuction.seller._id && (
                                     <Button
                                         onClick={handleWishlistToggle}
@@ -264,7 +264,7 @@ const AuctionDetail: React.FC = () => {
                                 )}
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4 mb-6">
+                            <div className="grid grid-cols-2 gap-4 mb-4 ml-0 mr-0">
                                 <div>
                                     <p className="text-sm text-gray-500">Category</p>
                                     <p className="font-medium">{currentAuction.category}</p>

@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
+import { Dialog } from 'primereact/dialog';
+import { Tag } from 'primereact/tag';
+import { Button } from 'primereact/button';
 
 interface Auction {
     _id: string;
@@ -11,12 +14,26 @@ interface Auction {
     images?: string[];
     description?: string;
     basePrice?: number;
+    category?: string;
+    endTime?: string;
+    startingBid?: number;
+}
+
+interface DetailedAuction extends Auction {
+    winner?: { name: string; _id: string };
+    currentBid?: number;
+    bids?: any[];
+    paymentStatus?: string;
+    updatedAt?: string;
 }
 
 const AdminApprovals: React.FC = () => {
     const { user } = useAuthStore();
     const [pendingAuctions, setPendingAuctions] = useState<Auction[]>([]);
     const [, setIsLoading] = useState(false);
+    const [selectedAuction, setSelectedAuction] = useState<DetailedAuction | null>(null);
+    const [auctionDetailsVisible, setAuctionDetailsVisible] = useState(false);
+    const [, setAuctionDetailsLoading] = useState(false);
 
     useEffect(() => {
         if (user?.role === 'admin') {
@@ -75,6 +92,30 @@ const AdminApprovals: React.FC = () => {
                 console.error('Error rejecting auction:', error);
                 alert('Failed to reject auction');
             }
+        }
+    };
+
+    const handleViewAuctionDetails = async (auctionId: string) => {
+        setAuctionDetailsLoading(true);
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/auctions/${auctionId}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                setSelectedAuction(data.data);
+                setAuctionDetailsVisible(true);
+            } else {
+                alert('Failed to fetch auction details');
+            }
+        } catch (error) {
+            console.error('Error fetching auction details:', error);
+            alert('Failed to fetch auction details');
+        } finally {
+            setAuctionDetailsLoading(false);
         }
     };
 
@@ -141,31 +182,59 @@ const AdminApprovals: React.FC = () => {
                                                     {auction.description}
                                                 </p>
                                             )}
-                                            <div className="flex items-center space-x-4 mt-2">
-                                                {auction.basePrice && (
-                                                    <p className="text-sm text-gray-500">
-                                                        Base Price: <span className="font-medium">₹{auction.basePrice.toLocaleString()}</span>
-                                                    </p>
-                                                )}
-                                                <p className="text-xs text-gray-400">
-                                                    Submitted: {new Date(auction.createdAt).toLocaleDateString()}
-                                                </p>
+                                            <div className="grid grid-cols-2 gap-4 mt-3">
+                                                <div>
+                                                    {auction.basePrice && (
+                                                        <p className="text-sm text-gray-500">
+                                                            Base Price: <span className="font-medium">₹{auction.basePrice.toLocaleString()}</span>
+                                                        </p>
+                                                    )}
+                                                    {auction.startingBid && auction.startingBid !== auction.basePrice && (
+                                                        <p className="text-sm text-gray-500">
+                                                            Starting Bid: <span className="font-medium">₹{auction.startingBid.toLocaleString()}</span>
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    {auction.category && (
+                                                        <p className="text-sm text-gray-500">
+                                                            Category: <span className="font-medium">{auction.category}</span>
+                                                        </p>
+                                                    )}
+                                                    {auction.endTime && (
+                                                        <p className="text-sm text-gray-500">
+                                                            End Time: <span className="font-medium">{new Date(auction.endTime).toLocaleString()}</span>
+                                                        </p>
+                                                    )}
+                                                </div>
                                             </div>
+                                            <p className="text-xs text-gray-400 mt-2">
+                                                Submitted: {new Date(auction.createdAt).toLocaleDateString()}
+                                            </p>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col space-y-2">
-                                        <button
+                                    <div className="flex flex-col gap-2">
+                                        <Button
+                                            severity='success'
+
+                                            onClick={() => handleViewAuctionDetails(auction._id)}
+                                            className="px-4 py-2 rounded text-sm transition-colors text-center"
+                                        >
+                                            View Details
+                                        </Button>
+                                        <Button
                                             onClick={() => handleApproveAuction(auction._id)}
-                                            className="bg-[#1A73E8] text-white px-4 py-2 rounded text-sm hover:bg-[#1557B0] transition-colors"
+                                            className="px-4 py-2 rounded text-sm transition-colors text-center"
                                         >
                                             Approve
-                                        </button>
-                                        <button
+                                        </Button>
+                                        <Button
+                                            severity='danger'
                                             onClick={() => handleRejectAuction(auction._id)}
-                                            className="bg-red-600 text-white px-4 py-2 rounded text-sm hover:bg-red-700 transition-colors"
+                                            className="px-4 py-2 rounded text-sm transition-colors text-center"
                                         >
                                             Reject
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             </li>
@@ -183,6 +252,140 @@ const AdminApprovals: React.FC = () => {
                     </ul>
                 </div>
             </div>
+
+            {/* Auction Details Modal */}
+            <Dialog
+                header="Auction Details"
+                visible={auctionDetailsVisible}
+                onHide={() => setAuctionDetailsVisible(false)}
+                style={{ width: '60vw' }}
+                className="p-fluid"
+            >
+                {selectedAuction && (
+                    <div className="space-y-6">
+                        {/* Auction Images */}
+                        {selectedAuction.images && selectedAuction.images.length > 0 && (
+                            <div>
+                                <h4 className="font-semibold text-lg mb-3">Auction Images</h4>
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                    {selectedAuction.images.map((image, index) => (
+                                        <div key={index} className="relative">
+                                            <img
+                                                src={image}
+                                                alt={`Auction image ${index + 1}`}
+                                                className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Auction Title and Description */}
+                        <div>
+                            <h3 className="text-2xl font-bold text-[#1A73E8] mb-2">{selectedAuction.title}</h3>
+                            {selectedAuction.description && (
+                                <p className="text-gray-600 mb-4">{selectedAuction.description}</p>
+                            )}
+                        </div>
+
+                        {/* Auction Details Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                                <h4 className="font-semibold text-lg">Auction Information</h4>
+                                <div className="space-y-2">
+                                    <p><span className="font-medium">Category:</span> {selectedAuction.category || 'Not specified'}</p>
+                                    <p><span className="font-medium">Status:</span>
+                                        <Tag
+                                            value={selectedAuction.status}
+                                            severity={
+                                                selectedAuction.status === 'active' ? 'success' :
+                                                    selectedAuction.status === 'pending' ? 'warning' :
+                                                        selectedAuction.status === 'completed' ? 'info' : 'danger'
+                                            }
+                                            className="ml-2"
+                                        />
+                                    </p>
+                                    <p><span className="font-medium">Approval Status:</span>
+                                        <Tag
+                                            value={selectedAuction.isApproved ? 'Approved' : 'Pending'}
+                                            severity={selectedAuction.isApproved ? 'success' : 'warning'}
+                                            className="ml-2"
+                                        />
+                                    </p>
+                                    <p><span className="font-medium">Created:</span> {new Date(selectedAuction.createdAt).toLocaleDateString()}</p>
+                                    {selectedAuction.updatedAt && (
+                                        <p><span className="font-medium">Last Updated:</span> {new Date(selectedAuction.updatedAt).toLocaleDateString()}</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <h4 className="font-semibold text-lg">Pricing & Timing</h4>
+                                <div className="space-y-2">
+                                    <p><span className="font-medium">Base Price:</span> ₹{selectedAuction.basePrice?.toLocaleString() || 'Not set'}</p>
+                                    {selectedAuction.startingBid && selectedAuction.startingBid !== selectedAuction.basePrice && (
+                                        <p><span className="font-medium">Starting Bid:</span> ₹{selectedAuction.startingBid.toLocaleString()}</p>
+                                    )}
+                                    {selectedAuction.currentBid && (
+                                        <p><span className="font-medium">Current Bid:</span> ₹{selectedAuction.currentBid.toLocaleString()}</p>
+                                    )}
+                                    {selectedAuction.endTime && (
+                                        <p><span className="font-medium">End Time:</span> {new Date(selectedAuction.endTime).toLocaleString()}</p>
+                                    )}
+                                </div>
+
+                                <h4 className="font-semibold text-lg mt-6">Seller Information</h4>
+                                <div className="space-y-2">
+                                    <p><span className="font-medium">Name:</span> {selectedAuction.seller?.name || 'Unknown'}</p>
+                                    <p><span className="font-medium">ID:</span> {selectedAuction.seller?._id || 'Unknown'}</p>
+                                </div>
+
+                                {selectedAuction.winner && (
+                                    <div className="mt-4">
+                                        <h4 className="font-semibold text-lg">Winner Information</h4>
+                                        <div className="space-y-2">
+                                            <p><span className="font-medium">Name:</span> {selectedAuction.winner.name}</p>
+                                            <p><span className="font-medium">ID:</span> {selectedAuction.winner._id}</p>
+                                            {selectedAuction.paymentStatus && (
+                                                <p><span className="font-medium">Payment Status:</span>
+                                                    <Tag
+                                                        value={selectedAuction.paymentStatus}
+                                                        severity={
+                                                            selectedAuction.paymentStatus === 'paid' ? 'success' :
+                                                                selectedAuction.paymentStatus === 'pending' ? 'warning' : 'danger'
+                                                        }
+                                                        className="ml-2"
+                                                    />
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Bids Information */}
+                        {selectedAuction.bids && selectedAuction.bids.length > 0 && (
+                            <div className="mt-6">
+                                <h4 className="font-semibold text-lg mb-3">Bid History</h4>
+                                <div className="bg-gray-50 rounded-lg p-4">
+                                    <p className="text-sm text-gray-600">Total Bids: {selectedAuction.bids.length}</p>
+                                    <div className="mt-2 max-h-32 overflow-y-auto">
+                                        {selectedAuction.bids.slice(-5).map((bid: any, index: number) => (
+                                            <div key={index} className="flex justify-between items-center py-1 border-b border-gray-200 last:border-b-0">
+                                                <span className="text-sm">{bid.bidder?.name || 'Unknown User'}</span>
+                                                <span className="text-sm font-medium">₹{bid.amount?.toLocaleString()}</span>
+                                                <span className="text-xs text-gray-500">{new Date(bid.createdAt).toLocaleString()}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+            </Dialog>
         </div>
     );
 };

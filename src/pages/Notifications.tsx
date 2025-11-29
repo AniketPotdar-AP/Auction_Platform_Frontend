@@ -137,11 +137,11 @@ const Notifications: React.FC = () => {
                                 className={`shadow-modern ${!notification.isRead ? 'border-l-4 border-l-primary' : ''}`}
                             >
                                 <div className="flex align-items-start">
-                                    <div className="shrink-0 mr-3">
+                                    <div className="mr-3">
                                         {getNotificationIcon(notification.type)}
                                     </div>
                                     <div className="flex-1">
-                                        <div className="flex align-items-center justify-content-between mb-2">
+                                        <div className="flex justify-content-between">
                                             <h4 className="text-lg font-medium">
                                                 {notification.title}
                                                 {!notification.isRead && <Badge value="New" severity="info" className="ml-2" />}

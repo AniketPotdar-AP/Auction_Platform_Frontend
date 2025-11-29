@@ -1,8 +1,10 @@
 import { Facebook, Heart, Instagram, Linkedin, Twitter } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
 
 const Footer: React.FC = () => {
+    const { user } = useAuthStore();
     return (
         <>
             <div >
@@ -45,16 +47,31 @@ const Footer: React.FC = () => {
                                             Browse Auctions
                                         </Link>
                                     </li>
-                                    <li>
-                                        <Link to="/create-auction" className="footer-hover transition-colors">
-                                            Create Auction
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link to="/dashboard" className="footer-hover transition-colors">
-                                            My Dashboard
-                                        </Link>
-                                    </li>
+                                    {user?.role === 'user' && (
+                                        <li>
+                                            <Link to="/create-auction" className="footer-hover transition-colors">
+                                                Create Auction
+                                            </Link>
+                                        </li>
+                                    )}
+                                    {
+                                        user?.role === 'user' && (
+                                            <li>
+                                                <Link to="/dashboard" className="footer-hover transition-colors">
+                                                    My Dashboard
+                                                </Link>
+                                            </li>
+                                        )
+                                    }
+                                    {
+                                        user?.role === 'admin' && (
+                                            <li>
+                                                <Link to="/admin" className="footer-hover transition-colors">
+                                                    Admin Dashboard
+                                                </Link>
+                                            </li>
+                                        )
+                                    }
                                     <li>
                                         <Link to="/profile" className="footer-hover transition-colors">
                                             My Profile

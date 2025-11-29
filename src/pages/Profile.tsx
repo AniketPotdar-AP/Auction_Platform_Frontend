@@ -112,7 +112,7 @@ const Profile: React.FC = () => {
             const formDataToSend = new FormData();
             formDataToSend.append('aadhaarNumber', aadhaarData.aadhaarNumber);
             aadhaarData.aadhaarImages.forEach((file) => {
-                formDataToSend.append('images', file);
+                formDataToSend.append('aadhaarImages', file);
             });
 
             const response = await fetch(`${import.meta.env.VITE_API_URL}/users/upload-aadhaar`, {

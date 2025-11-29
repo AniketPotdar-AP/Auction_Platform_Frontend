@@ -29,8 +29,10 @@ const Dashboard: React.FC = () => {
         fetchMyAuctions();
         fetchWonAuctions();
         fetchMyBids();
-        fetchDashboardStats();
-    }, [fetchMyAuctions, fetchWonAuctions, fetchMyBids]);
+        if (user?.role === 'admin') {
+            fetchDashboardStats();
+        }
+    }, [fetchMyAuctions, fetchWonAuctions, fetchMyBids, user?.role]);
 
     const fetchDashboardStats = async () => {
         try {
@@ -86,6 +88,7 @@ const Dashboard: React.FC = () => {
             console.error('Error fetching dashboard stats:', error);
         }
     };
+
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-IN', {
@@ -198,21 +201,23 @@ const Dashboard: React.FC = () => {
                         </div>
                     </Card>
 
-                    <Card className="shadow-lg-modern hover-lift transition-smooth">
-                        <div className="flex align-items-center">
-                            <div className="w-3rem h-3rem border-circle flex align-items-center justify-content-center mr-3" style={{ background: 'linear-gradient(135deg, #4CAF50 0%, #388E3C 100%)' }}>
-                                <Users size={24} color="white" />
+                    {user?.role === 'admin' && (
+                        <Card className="shadow-lg-modern hover-lift transition-smooth">
+                            <div className="flex align-items-center">
+                                <div className="w-3rem h-3rem border-circle flex align-items-center justify-content-center mr-3" style={{ background: 'linear-gradient(135deg, #4CAF50 0%, #388E3C 100%)' }}>
+                                    <Users size={24} color="white" />
+                                </div>
+                                <div>
+                                    <div className="text-sm text-500">Active Users</div>
+                                    <div className="text-xl font-medium" style={{ color: '#4CAF50' }}>{activeUsers}</div>
+                                </div>
                             </div>
-                            <div>
-                                <div className="text-sm text-500">Active Users</div>
-                                <div className="text-xl font-medium" style={{ color: '#4CAF50' }}>{activeUsers}</div>
-                            </div>
-                        </div>
-                    </Card>
+                        </Card>
+                    )}
                 </div>
 
-                {/* User Statistics Chart */}
-                {chartData && (
+                {/* User Statistics Chart - Admin Only */}
+                {user?.role === 'admin' && chartData && (
                     <Card title="Platform Statistics" className="shadow-modern mb-6">
                         <div className="w-full" style={{ height: '400px' }}>
                             <Chart

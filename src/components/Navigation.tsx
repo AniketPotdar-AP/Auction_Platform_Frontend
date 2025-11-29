@@ -5,7 +5,7 @@ import { useNotificationStore } from '../stores/notificationStore';
 import { Menubar } from 'primereact/menubar';
 import { Button } from 'primereact/button';
 import { Badge } from 'primereact/badge';
-import { Bell } from 'lucide-react';
+import { Bell, LogOut } from 'lucide-react';
 
 const Navigation: React.FC = () => {
     const { user, logout, isAuthenticated } = useAuthStore();
@@ -34,6 +34,10 @@ const Navigation: React.FC = () => {
             label: 'Dashboard',
             command: () => navigate('/dashboard')
         }] : []),
+        ...(user?.role === 'admin' ? [{
+            label: 'Dashboard',
+            command: () => navigate('/admin')
+        }] : []),
         {
             label: 'Browse Auctions',
             command: () => navigate('/auctions')
@@ -42,10 +46,7 @@ const Navigation: React.FC = () => {
             label: 'Profile',
             command: () => navigate('/profile')
         }] : []),
-        ...(user?.role === 'admin' ? [{
-            label: 'Admin Panel',
-            command: () => navigate('/admin')
-        }] : []),
+
         ...((user?.role === 'user') ? [{
             label: 'Create Auction',
             command: () => navigate('/create-auction'),
@@ -57,9 +58,9 @@ const Navigation: React.FC = () => {
         <div className="flex align-items-center gap-2">
             <Link to="/notifications" className="p-link shadow-lg p-3" style={{ backgroundColor: '#FFB300' }}>
                 <Bell size={18} color='white' />
-                {unreadCount > 0 && <Badge value={unreadCount > 99 ? '99+' : unreadCount.toString()} severity="danger" />}
+                {/* {unreadCount > 0 && <Badge value={unreadCount > 99 ? '99+' : unreadCount.toString()} severity="danger" />} */}
             </Link>
-            <Button label="Logout" icon="pi pi-sign-out" className="p-button-danger" onClick={handleLogout} />
+            <Button className="p-button-danger flex gap-2" onClick={handleLogout} > <LogOut size={20} /> Logout</Button>
         </div>
     ) : (
         <div className="flex align-items-center gap-2">

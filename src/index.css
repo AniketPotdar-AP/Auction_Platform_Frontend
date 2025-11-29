@@ -72,6 +72,17 @@ body {
   max-width: 77rem !important;
 }
 
+@media screen and (max-width: 1300px) {
+  .max-w-6xl {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+button {
+  cursor: pointer;
+}
+
 .grid {
   display: grid !important;
 }

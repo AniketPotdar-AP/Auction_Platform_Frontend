@@ -8,8 +8,11 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { Tag } from 'primereact/tag';
 import CustomInput from '../components/CustomInput';
 import CustomSelect from '../components/CustomSelect';
+import { Plus } from 'lucide-react';
+import { useAuthStore } from '../stores/authStore';
 
 const Auctions: React.FC = () => {
+    const { user } = useAuthStore();
     const { auctions, fetchAuctions, isLoading } = useAuctionStore();
     const [filters, setFilters] = useState({
         category: '',
@@ -127,11 +130,17 @@ const Auctions: React.FC = () => {
         <div className="min-h-screen bg-gray-50 p-4">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
+
                 <div className="flex justify-content-between align-items-center mb-4">
                     <h1 className="text-2xl font-bold">Auctions</h1>
-                    <Link to="/create-auction">
-                        <Button label="Create Auction" icon="pi pi-plus" className="p-button-primary" />
-                    </Link>
+                    {user?.role === 'user' && (
+                        <Link to="/create-auction">
+                            <Button className="p-button-primary flex gap-2" >
+                                <Plus size={20} />
+                                Create Auction
+                            </Button>
+                        </Link>
+                    )}
                 </div>
 
                 {/* Filters */}
