@@ -140,9 +140,9 @@ const Profile: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 p-4">
+        <div className="min-h-screen bg-gray-50 p-4 myProfile">
             <div className="max-w-6xl mx-auto mt-4">
-                <div className="mb-8">
+                <div className="mb-6">
                     <h1 className="text-3xl font-bold">Profile Management</h1>
                     <p className="mt-2 text-600">Update your profile information and manage verification documents</p>
                 </div>
@@ -208,99 +208,105 @@ const Profile: React.FC = () => {
                         </form>
                     </Card>
 
-                    {/* Aadhaar Verification */}
-                    <Card title="Aadhaar Verification" subTitle="Upload your Aadhaar documents for account verification" className="shadow-modern">
-                        {/* Verification Status */}
-                        <div className="mb-6 flex justify-content-between align-items-center">
-                            <span className="text-sm font-medium">Verification Status</span>
-                            <Tag
-                                value={user?.verificationStatus || 'Not submitted'}
-                                severity={
-                                    user?.verificationStatus === 'verified' ? 'success' :
-                                        user?.verificationStatus === 'rejected' ? 'danger' : 'warning'
-                                }
-                            />
-                        </div>
+                    {
+                        user?.role != 'admin' && (
+                            <div>
+                                {/* Aadhaar Verification */}
+                                <Card title="Aadhaar Verification" subTitle="Upload your Aadhaar documents for account verification" className="shadow-modern">
+                                    {/* Verification Status */}
+                                    <div className="mb-6 flex justify-content-between align-items-center">
+                                        <span className="text-sm font-medium">Verification Status</span>
+                                        <Tag
+                                            value={user?.verificationStatus || 'Not submitted'}
+                                            severity={
+                                                user?.verificationStatus === 'verified' ? 'success' :
+                                                    user?.verificationStatus === 'rejected' ? 'danger' : 'warning'
+                                            }
+                                        />
+                                    </div>
 
-                        {user?.verificationStatus !== 'verified' && (
-                            <form onSubmit={handleAadhaarSubmit} className="p-fluid">
-                                <div className="field mb-4">
-                                    <label htmlFor="aadhaarNumber" className="block text-sm font-medium mb-2">
-                                        Aadhaar Number
-                                    </label>
-                                    <CustomInput
-                                        type="text"
-                                        id="aadhaarNumber"
-                                        name="aadhaarNumber"
-                                        value={aadhaarData.aadhaarNumber}
-                                        onChange={handleAadhaarChange}
-                                        placeholder="Enter 12-digit Aadhaar number"
-                                        required
-                                    />
-                                </div>
-
-                                <div className="field mb-4">
-                                    <label htmlFor="aadhaarImages" className="block text-sm font-medium mb-2">
-                                        Aadhaar Images (Front & Back)
-                                    </label>
-                                    <input
-                                        type="file"
-                                        id="aadhaarImages"
-                                        name="aadhaarImages"
-                                        accept="image/*"
-                                        multiple
-                                        onChange={handleAadhaarChange}
-                                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                                    />
-                                    <p className="text-xs text-500 mt-1">Upload front and back images of your Aadhaar card</p>
-                                </div>
-
-                                {/* Image Previews */}
-                                {imagePreviews.length > 0 && (
-                                    <div className="grid grid-cols-2 gap-4 mb-4">
-                                        {imagePreviews.map((preview, index) => (
-                                            <div key={index} className="relative">
-                                                <img
-                                                    src={preview}
-                                                    alt={`Aadhaar ${index + 1}`}
-                                                    className="w-full h-12rem object-cover border-round"
-                                                />
-                                                <Button
-                                                    type="button"
-                                                    icon="pi pi-times"
-                                                    className="p-button-danger p-button-rounded p-button-text absolute top-0 right-0 mt-1 mr-1"
-                                                    onClick={() => removeAadhaarImage(index)}
+                                    {user?.verificationStatus !== 'verified' && (
+                                        <form onSubmit={handleAadhaarSubmit} className="p-fluid">
+                                            <div className="field mb-4">
+                                                <label htmlFor="aadhaarNumber" className="block text-sm font-medium mb-2">
+                                                    Aadhaar Number
+                                                </label>
+                                                <CustomInput
+                                                    type="text"
+                                                    id="aadhaarNumber"
+                                                    name="aadhaarNumber"
+                                                    value={aadhaarData.aadhaarNumber}
+                                                    onChange={handleAadhaarChange}
+                                                    placeholder="Enter 12-digit Aadhaar number"
+                                                    required
                                                 />
                                             </div>
-                                        ))}
-                                    </div>
-                                )}
 
-                                {error && (
-                                    <Message severity="error" text={error} className="mb-4" />
-                                )}
+                                            <div className="field mb-4">
+                                                <label htmlFor="aadhaarImages" className="block text-sm font-medium mb-2">
+                                                    Aadhaar Images (Front & Back)
+                                                </label>
+                                                <input
+                                                    type="file"
+                                                    id="aadhaarImages"
+                                                    name="aadhaarImages"
+                                                    accept="image/*"
+                                                    multiple
+                                                    onChange={handleAadhaarChange}
+                                                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                                />
+                                                <p className="text-xs text-500 mt-1">Upload front and back images of your Aadhaar card</p>
+                                            </div>
 
-                                {success && (
-                                    <Message severity="success" text={success} className="mb-4" />
-                                )}
+                                            {/* Image Previews */}
+                                            {imagePreviews.length > 0 && (
+                                                <div className="grid grid-cols-2 gap-4 mb-4">
+                                                    {imagePreviews.map((preview, index) => (
+                                                        <div key={index} className="relative">
+                                                            <img
+                                                                src={preview}
+                                                                alt={`Aadhaar ${index + 1}`}
+                                                                className="w-full h-12rem object-cover border-round"
+                                                            />
+                                                            <Button
+                                                                type="button"
+                                                                icon="pi pi-times"
+                                                                className="p-button-danger p-button-rounded p-button-text absolute top-0 right-0 mt-1 mr-1"
+                                                                onClick={() => removeAadhaarImage(index)}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
 
-                                <Button
-                                    type="submit"
-                                    label={isLoading ? 'Uploading...' : 'Upload for Verification'}
-                                    loading={isLoading}
-                                    className="w-full p-button-success"
-                                />
-                            </form>
-                        )}
+                                            {error && (
+                                                <Message severity="error" text={error} className="mb-4" />
+                                            )}
 
-                        {user?.verificationStatus === 'verified' && (
-                            <div className="text-center py-8">
-                                <i className="pi pi-check-circle text-green-600 text-4xl mb-3"></i>
-                                <p className="text-green-600 font-medium">Your account is verified!</p>
-                                <p className="text-sm text-600 mt-1">You have verified status on the platform</p>
+                                            {success && (
+                                                <Message severity="success" text={success} className="mb-4" />
+                                            )}
+
+                                            <Button
+                                                type="submit"
+                                                label={isLoading ? 'Uploading...' : 'Upload for Verification'}
+                                                loading={isLoading}
+                                                className="w-full p-button-success"
+                                            />
+                                        </form>
+                                    )}
+
+                                    {user?.verificationStatus === 'verified' && (
+                                        <div className="text-center py-8">
+                                            <i className="pi pi-check-circle text-green-600 text-4xl mb-3"></i>
+                                            <p className="text-green-600 font-medium">Your account is verified!</p>
+                                            <p className="text-sm text-600 mt-1">You have verified status on the platform</p>
+                                        </div>
+                                    )}
+                                </Card>
                             </div>
-                        )}
-                    </Card>
+                        )
+                    }
                 </div>
             </div>
         </div>

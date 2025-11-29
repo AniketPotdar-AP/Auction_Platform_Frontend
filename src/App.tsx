@@ -12,6 +12,7 @@ import Notifications from './pages/Notifications';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminVerifications from './pages/AdminVerifications';
 import AdminApprovals from './pages/AdminApprovals';
+import AdminUsers from './pages/AdminUsers';
 import ContactUs from './pages/ContactUs';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
@@ -78,6 +79,10 @@ function App() {
           <Route
             path="/admin/approvals"
             element={isAuthenticated ? <AdminApprovals /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/admin/users"
+            element={isAuthenticated ? <AdminUsers /> : <Navigate to="/login" />}
           />
           <Route
             path="/contact"

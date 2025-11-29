@@ -15,12 +15,14 @@ const AdminDashboard: React.FC = () => {
     });
     const [chartData, setChartData] = useState<any>(null);
     const [userCreationData, setUserCreationData] = useState<any>(null);
+    const [auctionCreationData, setAuctionCreationData] = useState<any>(null);
     const [, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (user?.role === 'admin') {
             fetchDashboardData();
             fetchUserCreationAnalytics();
+            fetchAuctionCreationAnalytics();
         }
     }, [user]);
 
@@ -106,6 +108,34 @@ const AdminDashboard: React.FC = () => {
         }
     };
 
+    const fetchAuctionCreationAnalytics = async () => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/auction-creation-analytics`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            if (response.ok) {
+                const analyticsData = await response.json();
+                if (analyticsData.success && analyticsData.data) {
+                    setAuctionCreationData({
+                        labels: analyticsData.data.labels,
+                        datasets: [{
+                            label: 'New Auctions',
+                            data: analyticsData.data.data,
+                            borderColor: '#4CAF50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching auction creation analytics:', error);
+        }
+    };
+
     if (user?.role !== 'admin') {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -127,7 +157,7 @@ const AdminDashboard: React.FC = () => {
                 </div>
             </div>
 
-            <div className="max-w-6xl mx-auto py-6">
+            <div className="max-w-6xl mx-auto py-6 adminDashboard">
                 {/* Stats Cards */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }} className="mb-6 w-full">
                     <Card className="shadow-lg-modern hover-lift transition-smooth">
@@ -191,151 +221,215 @@ const AdminDashboard: React.FC = () => {
                     </Card>
                 </div>
 
-                {/* Platform Statistics Chart */}
-                {chartData && (
-                    <Card title="Platform Statistics Overview" className="shadow-modern mb-6">
-                        <div className="w-full" style={{ height: '400px' }}>
-                            <Chart
-                                type="bar"
-                                data={chartData}
-                                options={{
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    plugins: {
-                                        legend: {
-                                            display: false
-                                        },
-                                        title: {
-                                            display: true,
-                                            text: 'Platform Metrics',
-                                            font: {
-                                                size: 16,
-                                                weight: 'bold'
-                                            },
-                                            color: '#1A73E8'
-                                        }
-                                    },
-                                    scales: {
-                                        y: {
-                                            beginAtZero: true,
-                                            ticks: {
-                                                color: '#64748B'
-                                            },
-                                            grid: {
-                                                color: '#E5E7EB'
-                                            }
-                                        },
-                                        x: {
-                                            ticks: {
-                                                color: '#64748B'
-                                            },
-                                            grid: {
-                                                color: '#E5E7EB'
-                                            }
-                                        }
-                                    }
-                                }}
-                                style={{ height: '100%' }}
-                            />
-                        </div>
-                    </Card>
-                )}
+                <div className='graphs'>
+                    {/* Quick Actions */}
+                    <div className='mb-6'>
+                        <Card title="Quick Actions" className="shadow-modern">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <button
+                                    onClick={() => window.location.href = '/admin/verifications'}
+                                    className="p-4 bg-[#1A73E8] text-white rounded-2xl hover:bg-[#1557B0] transition-all duration-200 transform hover:scale-105"
+                                >
+                                    <div className="flex flex-col items-center text-center">
+                                        <UserCheck size={32} className="mb-2" />
+                                        <div className="font-medium text-sm">Manage Verifications</div>
+                                        <div className="text-xs opacity-90 mt-1">Review user documents</div>
+                                    </div>
+                                </button>
 
-                {/* User Growth Analytics Chart */}
-                {userCreationData && userCreationData.labels && userCreationData.labels.length > 0 && (
-                    <Card title="User Growth Analytics" className="shadow-modern mb-6">
-                        <div className="w-full" style={{ height: '400px' }}>
-                            <Chart
-                                type="line"
-                                data={userCreationData}
-                                options={{
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    plugins: {
-                                        legend: {
-                                            display: true,
-                                            position: 'top'
-                                        },
-                                        title: {
-                                            display: true,
-                                            text: 'New User Registrations Over Time',
-                                            font: {
-                                                size: 16,
-                                                weight: 'bold'
-                                            },
-                                            color: '#1A73E8'
-                                        }
-                                    },
-                                    scales: {
-                                        y: {
-                                            beginAtZero: true,
-                                            ticks: {
-                                                color: '#64748B',
-                                                stepSize: 1
-                                            },
-                                            grid: {
-                                                color: '#E5E7EB'
-                                            }
-                                        },
-                                        x: {
-                                            ticks: {
-                                                color: '#64748B'
-                                            },
-                                            grid: {
-                                                color: '#E5E7EB'
-                                            }
-                                        }
-                                    }
-                                }}
-                                style={{ height: '100%' }}
-                            />
-                        </div>
-                    </Card>
-                )}
+                                <button
+                                    onClick={() => window.location.href = '/auctions'}
+                                    className="p-4 bg-[#FFB300] text-white rounded-2xl hover:bg-[#FF8F00] transition-all duration-200 transform hover:scale-105"
+                                >
+                                    <div className="flex flex-col items-center text-center">
+                                        <Gavel size={32} className="mb-2" />
+                                        <div className="font-medium text-sm">Browse Auctions</div>
+                                        <div className="text-xs opacity-90 mt-1">View all listings</div>
+                                    </div>
+                                </button>
 
-                {/* Quick Actions */}
-                <Card title="Quick Actions" className="shadow-modern">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <button
-                            onClick={() => window.location.href = '/admin/verifications'}
-                            className="p-4 bg-[#1A73E8] text-white rounded-lg hover:bg-[#1557B0] transition-colors"
-                        >
-                            <div className="flex items-center">
-                                <UserCheck size={24} className="mr-3" />
-                                <div>
-                                    <div className="font-medium">Manage Verifications</div>
-                                    <div className="text-sm opacity-90">Review user documents</div>
-                                </div>
+                                <button
+                                    onClick={() => window.location.href = '/admin/approvals'}
+                                    className="p-4 bg-[#4CAF50] text-white rounded-2xl hover:bg-[#388E3C] transition-all duration-200 transform hover:scale-105"
+                                >
+                                    <div className="flex flex-col items-center text-center">
+                                        <TrendingUp size={32} className="mb-2" />
+                                        <div className="font-medium text-sm">Auction Approvals</div>
+                                        <div className="text-xs opacity-90 mt-1">Review pending auctions</div>
+                                    </div>
+                                </button>
+
+                                <button
+                                    onClick={() => window.location.href = '/admin/users'}
+                                    className="p-4 bg-[#9C27B0] text-white rounded-2xl hover:bg-[#7B1FA2] transition-all duration-200 transform hover:scale-105"
+                                >
+                                    <div className="flex flex-col items-center text-center">
+                                        <Users size={32} className="mb-2" />
+                                        <div className="font-medium text-sm">User Management</div>
+                                        <div className="text-xs opacity-90 mt-1">Manage all users</div>
+                                    </div>
+                                </button>
                             </div>
-                        </button>
 
-                        <button
-                            onClick={() => window.location.href = '/auctions'}
-                            className="p-4 bg-[#FFB300] text-white rounded-lg hover:bg-[#FF8F00] transition-colors"
-                        >
-                            <div className="flex items-center">
-                                <Gavel size={24} className="mr-3" />
-                                <div>
-                                    <div className="font-medium">Browse Auctions</div>
-                                    <div className="text-sm opacity-90">View all listings</div>
-                                </div>
-                            </div>
-                        </button>
-
-                        <button
-                            onClick={() => window.location.href = '/admin/approvals'}
-                            className="p-4 bg-[#4CAF50] text-white rounded-lg hover:bg-[#388E3C] transition-colors"
-                        >
-                            <div className="flex items-center">
-                                <TrendingUp size={24} className="mr-3" />
-                                <div>
-                                    <div className="font-medium">Auction Approvals</div>
-                                    <div className="text-sm opacity-90">Review pending auctions</div>
-                                </div>
-                            </div>
-                        </button>
+                        </Card>
                     </div>
-                </Card>
+
+                    {/* Platform Statistics Chart */}
+                    {chartData && (
+                        <Card title="Platform Statistics Overview" className="shadow-modern mb-10 ">
+                            <div className="w-full" style={{ height: '400px' }}>
+                                <Chart
+                                    type="bar"
+                                    data={chartData}
+                                    options={{
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        plugins: {
+                                            legend: {
+                                                display: false
+                                            },
+                                            title: {
+                                                display: true,
+                                                // text: 'Platform Metrics',
+                                                font: {
+                                                    size: 16,
+                                                    weight: 'bold'
+                                                },
+                                                color: '#1A73E8'
+                                            },
+                                        },
+                                        scales: {
+                                            y: {
+                                                beginAtZero: true,
+                                                ticks: {
+                                                    color: '#64748B'
+                                                },
+                                                grid: {
+                                                    color: '#E5E7EB'
+                                                }
+                                            },
+                                            x: {
+                                                ticks: {
+                                                    color: '#64748B'
+                                                },
+                                                grid: {
+                                                    color: '#E5E7EB'
+                                                }
+                                            }
+                                        }
+                                    }}
+                                    style={{ height: '100%' }}
+                                />
+                            </div>
+                        </Card>
+                    )}
+
+                    {/* User Growth Analytics Chart */}
+                    {userCreationData && userCreationData.labels && userCreationData.labels.length > 0 && (
+                        <Card title="User Growth Analytics" className="shadow-modern mb-6 mt-6">
+                            <div className="w-full" style={{ height: '400px' }}>
+                                <Chart
+                                    type="line"
+                                    data={userCreationData}
+                                    options={{
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        plugins: {
+                                            legend: {
+                                                display: false,
+                                                position: 'top'
+                                            },
+                                            title: {
+                                                display: true,
+                                                position: 'top',
+                                                // text: 'New User Registrations Over Time',
+                                                font: {
+                                                    size: 16,
+                                                    weight: 'bold'
+                                                },
+                                                color: '#1A73E8'
+                                            }
+                                        },
+                                        scales: {
+                                            y: {
+                                                beginAtZero: true,
+                                                ticks: {
+                                                    color: '#64748B',
+                                                    stepSize: 1
+                                                },
+                                                grid: {
+                                                    color: '#E5E7EB'
+                                                }
+                                            },
+                                            x: {
+                                                ticks: {
+                                                    color: '#64748B'
+                                                },
+                                                grid: {
+                                                    color: '#E5E7EB'
+                                                }
+                                            }
+                                        }
+                                    }}
+                                    style={{ height: '100%' }}
+                                />
+                            </div>
+                        </Card>
+                    )}
+
+                    {/* Auction Growth Analytics Chart */}
+                    {auctionCreationData && auctionCreationData.labels && auctionCreationData.labels.length > 0 && (
+                        <Card title="Auction Growth Analytics" className="shadow-modern mb-6">
+                            <div className="w-full" style={{ height: '400px' }}>
+                                <Chart
+                                    type="line"
+                                    data={auctionCreationData}
+                                    options={{
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        plugins: {
+                                            legend: {
+                                                display: false,
+                                                position: 'top'
+                                            },
+                                            title: {
+                                                display: true,
+                                                position: 'top',
+                                                // text: 'New Auction Listings Over Time',
+                                                font: {
+                                                    size: 16,
+                                                    weight: 'bold'
+                                                },
+                                                color: '#4CAF50'
+                                            }
+                                        },
+                                        scales: {
+                                            y: {
+                                                beginAtZero: true,
+                                                ticks: {
+                                                    color: '#64748B',
+                                                    stepSize: 1
+                                                },
+                                                grid: {
+                                                    color: '#E5E7EB'
+                                                }
+                                            },
+                                            x: {
+                                                ticks: {
+                                                    color: '#64748B'
+                                                },
+                                                grid: {
+                                                    color: '#E5E7EB'
+                                                }
+                                            }
+                                        }
+                                    }}
+                                    style={{ height: '100%' }}
+                                />
+                            </div>
+                        </Card>
+                    )}
+                </div>
             </div>
         </div>
     );

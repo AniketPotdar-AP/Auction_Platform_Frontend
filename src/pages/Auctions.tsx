@@ -80,7 +80,7 @@ const Auctions: React.FC = () => {
     ];
 
     const itemTemplate = (auction: any) => (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-2 auctionCard">
             <Card className="shadow-modern h-full rounded-2xl" style={{ border: '1px solid #cecece', borderRadius: '16px' }}>
                 <div className="relative">
                     {auction.images && auction.images[0] ? (
@@ -127,8 +127,8 @@ const Auctions: React.FC = () => {
     );
 
     return (
-        <div className="min-h-screen bg-gray-50 p-4">
-            <div className="max-w-6xl mx-auto">
+        <div className="min-h-screen bg-gray-50 p-4 auctionCard mt-4">
+            <div className="max-w-8xl mx-auto">
                 {/* Header */}
 
                 <div className="flex justify-content-between align-items-center mb-4">
@@ -191,15 +191,17 @@ const Auctions: React.FC = () => {
                         <p className="mt-4 text-600">Loading auctions...</p>
                     </div>
                 ) : (
-                    <DataView
-                        value={auctions}
-                        itemTemplate={itemTemplate}
-                        layout="grid"
-                        paginator
-                        rows={12}
-                        className='text-center mt-4 rounded-2xl'
-                        emptyMessage="No auctions found matching your criteria."
-                    />
+                    <div>
+                        <DataView
+                            value={auctions}
+                            itemTemplate={itemTemplate}
+                            layout="grid"
+                            paginator
+                            rows={12}
+                            className='text-center mt-4 rounded-2xl'
+                            emptyMessage="No auctions found matching your criteria."
+                        />
+                    </div>
                 )}
             </div>
         </div>

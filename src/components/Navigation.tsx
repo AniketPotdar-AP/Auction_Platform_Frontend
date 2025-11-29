@@ -41,11 +41,10 @@ const Navigation: React.FC = () => {
             label: 'Browse Auctions',
             command: () => navigate('/auctions')
         },
-        ...(user?.role !== 'admin' ? [{
-            label: 'Profile',
+        {
+            label: 'My Profile',
             command: () => navigate('/profile')
-        }] : []),
-
+        },
         ...((user?.role === 'user') ? [{
             label: 'Create Auction',
             command: () => navigate('/create-auction'),

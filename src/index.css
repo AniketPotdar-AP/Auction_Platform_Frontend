@@ -72,6 +72,10 @@ body {
   max-width: 77rem !important;
 }
 
+.max-w-8xl {
+  max-width: 92rem !important;
+}
+
 @media screen and (max-width: 1300px) {
   .max-w-6xl {
     padding-left: 10px;
@@ -116,4 +120,32 @@ button {
 .footer-hover:hover {
   color: #FFB300;
   cursor: pointer;
+}
+
+.adminDashboard {
+  .p-card {
+    border-radius: 1rem;
+  }
+
+  .graphs {
+    .p-card .p-card-body {
+      padding: 2.4rem 2.2rem;
+    }
+  }
+}
+
+.adminUsers,
+.auctionCard,
+.myProfile {
+  .p-card {
+    border-radius: 1rem;
+  }
+
+  .p-card .p-card-body {
+    padding: 2.4rem 2.2rem;
+  }
+}
+
+.p-dialog-enter-done {
+  width: 35rem;
 }

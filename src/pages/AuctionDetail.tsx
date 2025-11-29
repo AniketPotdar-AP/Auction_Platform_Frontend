@@ -15,7 +15,7 @@ import CustomInput from '../components/CustomInput';
 const AuctionDetail: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const { user } = useAuthStore();
+    const { user, isAuthenticated } = useAuthStore();
     const { currentAuction, fetchAuctionById } = useAuctionStore();
     const { bids, fetchBidsForAuction, placeBid, isLoading: bidLoading } = useBidStore();
     const { createReview } = useReviewStore();
@@ -211,9 +211,10 @@ const AuctionDetail: React.FC = () => {
     }
 
     const isAuctionActive = currentAuction.status === 'active' && new Date() < new Date(currentAuction.endTime);
-    const canBid = user && currentAuction.seller && user._id !== currentAuction.seller._id && isAuctionActive;
+    const canBid = isAuthenticated && user && currentAuction.seller && user._id !== currentAuction.seller._id && isAuctionActive;
     const currentBid = currentAuction.currentBid || currentAuction.basePrice;
     const minNextBid = currentBid + currentAuction.minIncrement;
+
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -253,7 +254,7 @@ const AuctionDetail: React.FC = () => {
                         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
                             <div className="flex items-center justify-between mb-4">
                                 <h1 className="text-3xl font-bold text-gray-900 px-0">{currentAuction.title}</h1>
-                                {user && currentAuction.seller && user._id !== currentAuction.seller._id && (
+                                {isAuthenticated && user && currentAuction.seller && user._id !== currentAuction.seller._id && (
                                     <Button
                                         onClick={handleWishlistToggle}
                                         disabled={wishlistLoading}
@@ -319,9 +320,12 @@ const AuctionDetail: React.FC = () => {
                                             mode="currency"
                                             currency="INR"
                                             locale="en-IN"
-                                            placeholder={`Enter bid amount`}
+                                            placeholder={`Minimum bid: ₹${minNextBid}`}
                                             className="w-full"
                                         />
+                                        <div className="text-sm text-gray-600 mt-1">
+                                            Next minimum bid: <span className="font-semibold text-green-600">₹{minNextBid}</span>
+                                        </div>
                                     </div>
 
                                     {error && (
@@ -340,11 +344,13 @@ const AuctionDetail: React.FC = () => {
 
                             {!canBid && (
                                 <div className="text-center text-gray-500">
-                                    {currentAuction.seller && currentAuction.seller._id === user?._id
-                                        ? 'You cannot bid on your own auction'
-                                        : !isAuctionActive
-                                            ? 'This auction has ended'
-                                            : 'Please log in to bid'
+                                    {!isAuthenticated
+                                        ? 'Please log in to bid'
+                                        : currentAuction.seller && currentAuction.seller._id === user?._id
+                                            ? 'You cannot bid on your own auction'
+                                            : !isAuctionActive
+                                                ? 'This auction has ended'
+                                                : 'You are not eligible to bid on this auction'
                                     }
                                 </div>
                             )}
