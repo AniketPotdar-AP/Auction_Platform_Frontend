@@ -4,12 +4,11 @@ import { useAuthStore } from '../stores/authStore';
 import { useNotificationStore } from '../stores/notificationStore';
 import { Menubar } from 'primereact/menubar';
 import { Button } from 'primereact/button';
-import { Badge } from 'primereact/badge';
 import { Bell, LogOut } from 'lucide-react';
 
 const Navigation: React.FC = () => {
     const { user, logout, isAuthenticated } = useAuthStore();
-    const { unreadCount, fetchNotifications } = useNotificationStore();
+    const { fetchNotifications } = useNotificationStore();
     const navigate = useNavigate();
 
     useEffect(() => {

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { Dialog } from 'primereact/dialog';
-import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
 
 interface User {
