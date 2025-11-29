@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.17",
     "@types/react-router-dom": "^5.3.3",
     "@types/socket.io-client": "^1.4.36",
     "axios": "^1.13.2",
