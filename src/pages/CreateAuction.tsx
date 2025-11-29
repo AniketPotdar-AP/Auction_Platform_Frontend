@@ -22,7 +22,7 @@ const CreateAuction: React.FC = () => {
         subcategory: '',
         condition: 'New',
         basePrice: '',
-        minIncrement: '',
+        minAuctionAmount: '',
         startTime: null as Date | null,
         endTime: null as Date | null,
         deliveryOptions: 'Shipping',
@@ -37,7 +37,9 @@ const CreateAuction: React.FC = () => {
         const { name, value } = e.target || e;
         setFormData(prev => ({
             ...prev,
-            [name]: value
+            [name]: value,
+            // If basePrice changes, update minAuctionAmount to match
+            ...(name === 'basePrice' && { minAuctionAmount: value })
         }));
 
         // Clear error when user starts typing
@@ -87,11 +89,11 @@ const CreateAuction: React.FC = () => {
         if (!formData.description.trim()) newErrors.description = 'Description is required';
         if (!formData.category) newErrors.category = 'Category is required';
         if (!formData.condition) newErrors.condition = 'Condition is required';
-        if (!formData.basePrice || parseFloat(formData.basePrice) <= 0) {
-            newErrors.basePrice = 'Valid base price is required';
+        if (!formData.basePrice || parseInt(formData.basePrice) <= 0) {
+            newErrors.basePrice = 'Valid starting price is required';
         }
-        if (!formData.minIncrement || parseFloat(formData.minIncrement) <= 0) {
-            newErrors.minIncrement = 'Valid minimum increment is required';
+        if (formData.basePrice && !Number.isInteger(parseFloat(formData.basePrice))) {
+            newErrors.basePrice = 'Starting price must be a whole number';
         }
         if (!formData.startTime) newErrors.startTime = 'Start time is required';
         if (!formData.endTime) newErrors.endTime = 'End time is required';
@@ -126,13 +128,19 @@ const CreateAuction: React.FC = () => {
             // Create FormData for file upload
             const submitData = new FormData();
 
-            // Add form fields
-            Object.entries(formData).forEach(([key, value]) => {
-                if (value) { // Only add non-empty values
+            // Add form fields, ensuring minAuctionAmount equals basePrice
+            const finalFormData = {
+                ...formData,
+                basePrice: parseInt(formData.basePrice),
+                minAuctionAmount: parseInt(formData.basePrice) // Ensure they are the same
+            };
+
+            Object.entries(finalFormData).forEach(([key, value]) => {
+                if (value !== undefined && value !== null) { // Only add non-empty values
                     if (value instanceof Date) {
                         submitData.append(key, value.toISOString());
                     } else {
-                        submitData.append(key, value);
+                        submitData.append(key, value.toString());
                     }
                 }
             });
@@ -307,40 +315,22 @@ const CreateAuction: React.FC = () => {
                         </div>
 
                         {/* Pricing */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
-                            <div>
-                                <label htmlFor="basePrice" className="block text-sm font-medium text-gray-700 mb-2">
-                                    Base Price (₹) *
-                                </label>
-                                <CustomInput
-                                    type="number"
-                                    id="basePrice"
-                                    name="basePrice"
-                                    value={formData.basePrice}
-                                    onChange={handleInputChange}
-                                    placeholder="1000"
-                                    min="1"
-                                    step="0.01"
-                                />
-                                {errors.basePrice && <p className="mt-1 text-sm text-red-600">{errors.basePrice}</p>}
-                            </div>
-
-                            <div>
-                                <label htmlFor="minIncrement" className="block text-sm font-medium text-gray-700 mb-2">
-                                    Minimum Increment (₹) *
-                                </label>
-                                <CustomInput
-                                    type="number"
-                                    id="minIncrement"
-                                    name="minIncrement"
-                                    value={formData.minIncrement}
-                                    onChange={handleInputChange}
-                                    placeholder="50"
-                                    min="1"
-                                    step="0.01"
-                                />
-                                {errors.minIncrement && <p className="mt-1 text-sm text-red-600">{errors.minIncrement}</p>}
-                            </div>
+                        <div>
+                            <label htmlFor="basePrice" className="block text-sm font-medium text-gray-700 mb-2">
+                                Starting Price (₹) *
+                            </label>
+                            <CustomInput
+                                type="number"
+                                id="basePrice"
+                                name="basePrice"
+                                value={formData.basePrice}
+                                onChange={handleInputChange}
+                                placeholder="1000"
+                                min="1"
+                                step="1"
+                            />
+                            <p className="mt-1 text-xs text-gray-600">This will be the minimum bid amount for this auction</p>
+                            {errors.basePrice && <p className="mt-1 text-sm text-red-600">{errors.basePrice}</p>}
                         </div>
 
                         {/* Time Settings */}

@@ -122,11 +122,12 @@ button {
   cursor: pointer;
 }
 
-.adminDashboard {
-  .p-card {
-    border-radius: 1rem;
-  }
+.p-card {
+  border-radius: 1rem;
+}
 
+.adminDashboard,
+.userDashboard {
   .graphs {
     .p-card .p-card-body {
       padding: 2.4rem 2.2rem;
@@ -137,12 +138,15 @@ button {
 .adminUsers,
 .auctionCard,
 .myProfile {
-  .p-card {
-    border-radius: 1rem;
-  }
-
   .p-card .p-card-body {
     padding: 2.4rem 2.2rem;
+  }
+}
+
+.approvalBtn {
+  .p-button {
+    width: 10rem;
+    justify-content: center;
   }
 }
 

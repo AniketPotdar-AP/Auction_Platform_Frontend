@@ -103,7 +103,7 @@ const Notifications: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 p-4">
+        <div className="min-h-screen bg-gray-50 p-4 notifications">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="flex justify-content-between align-items-center mb-4 mt-4">
@@ -134,7 +134,7 @@ const Notifications: React.FC = () => {
                         {notifications.map((notification) => (
                             <Card
                                 key={notification._id}
-                                className={`shadow-modern ${!notification.isRead ? 'border-l-4 border-l-primary' : ''}`}
+                                className={`shadow-modern border-l-4 border-l-primary`}
                             >
                                 <div className="flex align-items-start">
                                     <div className="mr-3">
@@ -165,7 +165,7 @@ const Notifications: React.FC = () => {
                                         </p>
                                         {notification.auction && (
                                             <Link to={`/auctions/${notification.auction}`}>
-                                                <Button label="View Auction" icon="pi pi-arrow-right" className="p-button-link" />
+                                                <Button severity='success' className='p-button-success text-white mt-1 text-xs' label="View Auction" icon="pi pi-arrow-right" />
                                             </Link>
                                         )}
                                     </div>

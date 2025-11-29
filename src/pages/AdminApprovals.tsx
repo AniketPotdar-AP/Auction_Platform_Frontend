@@ -170,7 +170,7 @@ const AdminApprovals: React.FC = () => {
                                                 <h4 className="text-sm font-medium text-gray-900 truncate">
                                                     {auction.title}
                                                 </h4>
-                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                <span style={{ background: '#fef9c2 ' }} className="px-2.5 py-0.5 rounded-lg text-xs font-medium">
                                                     Pending Approval
                                                 </span>
                                             </div>
@@ -178,7 +178,7 @@ const AdminApprovals: React.FC = () => {
                                                 Seller: <span className="font-medium">{auction.seller?.name || 'Unknown'}</span>
                                             </p>
                                             {auction.description && (
-                                                <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+                                                <p className="text-sm text-gray-600 mt-2 line-clamp-2 w-[90%]">
                                                     {auction.description}
                                                 </p>
                                             )}
@@ -189,31 +189,28 @@ const AdminApprovals: React.FC = () => {
                                                             Base Price: <span className="font-medium">₹{auction.basePrice.toLocaleString()}</span>
                                                         </p>
                                                     )}
-                                                    {auction.startingBid && auction.startingBid !== auction.basePrice && (
-                                                        <p className="text-sm text-gray-500">
-                                                            Starting Bid: <span className="font-medium">₹{auction.startingBid.toLocaleString()}</span>
-                                                        </p>
-                                                    )}
-                                                </div>
-                                                <div>
                                                     {auction.category && (
                                                         <p className="text-sm text-gray-500">
                                                             Category: <span className="font-medium">{auction.category}</span>
                                                         </p>
                                                     )}
+                                                </div>
+                                                <div>
                                                     {auction.endTime && (
                                                         <p className="text-sm text-gray-500">
                                                             End Time: <span className="font-medium">{new Date(auction.endTime).toLocaleString()}</span>
                                                         </p>
                                                     )}
+                                                    {auction.category && (
+                                                        <p className="text-sm text-gray-500">
+                                                            Submitted: {new Date(auction.createdAt).toLocaleDateString()}
+                                                        </p>
+                                                    )}
                                                 </div>
                                             </div>
-                                            <p className="text-xs text-gray-400 mt-2">
-                                                Submitted: {new Date(auction.createdAt).toLocaleDateString()}
-                                            </p>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col gap-2">
+                                    <div className="flex flex-col gap-2 approvalBtn">
                                         <Button
                                             severity='success'
 
@@ -386,7 +383,7 @@ const AdminApprovals: React.FC = () => {
                     </div>
                 )}
             </Dialog>
-        </div>
+        </div >
     );
 };
 

@@ -11,7 +11,7 @@ interface Auction {
     images: string[];
     basePrice: number;
     currentBid: number;
-    minIncrement: number;
+    minAuctionAmount: number;
     startTime: string;
     endTime: string;
     status: 'pending' | 'active' | 'completed' | 'cancelled';

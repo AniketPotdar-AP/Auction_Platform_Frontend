@@ -26,6 +26,7 @@ interface BidState {
     fetchBidsForAuction: (auctionId: string) => Promise<void>;
     fetchMyBids: () => Promise<void>;
     placeBid: (auctionId: string, amount: number) => Promise<void>;
+    updateBid: (bidId: string, amount: number) => Promise<void>;
     clearError: () => void;
 }
 
@@ -86,6 +87,29 @@ export const useBidStore = create<BidState>((set) => ({
             set({
                 isLoading: false,
                 error: error.response?.data?.message || 'Failed to place bid'
+            });
+            throw error;
+        }
+    },
+
+    updateBid: async (bidId: string, amount: number) => {
+        set({ isLoading: true, error: null });
+        try {
+            const response = await api.put(`/bids/${bidId}`, { amount });
+            const updatedBid = response.data.data;
+
+            // Update bids list
+            set((state) => ({
+                bids: state.bids.map(bid => bid._id === bidId ? updatedBid : bid),
+                myBids: state.myBids.map(bid => bid._id === bidId ? updatedBid : bid),
+                isLoading: false
+            }));
+
+            return updatedBid;
+        } catch (error: any) {
+            set({
+                isLoading: false,
+                error: error.response?.data?.message || 'Failed to update bid'
             });
             throw error;
         }

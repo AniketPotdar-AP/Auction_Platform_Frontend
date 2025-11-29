@@ -117,6 +117,7 @@ const Dashboard: React.FC = () => {
 
     const statusTemplate = (rowData: any) => (
         <Tag
+            className='capitalize'
             value={rowData.status}
             severity={
                 rowData.status === 'active' ? 'success' :
@@ -158,7 +159,7 @@ const Dashboard: React.FC = () => {
     );
 
     return (
-        <div className="min-h-screen p-4">
+        <div className="min-h-screen p-4 userDashboard">
             <div className="max-w-6xl mx-auto">
                 <div className="mb-6 mt-2 ">
                     <h1 className="text-3xl font-bold" style={{ color: '#1A73E8' }}>Dashboard</h1>
@@ -267,7 +268,7 @@ const Dashboard: React.FC = () => {
                 )}
 
                 {/* Recent Auctions */}
-                <Card title="My Recent Auctions" className="shadow-modern mb-4">
+                <Card title="My Recent Auctions" className="shadow-modern mb-4 py-4">
                     {myAuctions.length > 0 ? (
                         <DataTable value={myAuctions.slice(0, 3)} className="p-datatable-sm">
                             <Column body={myAuctionsTemplate} header="Auction" />
@@ -281,7 +282,7 @@ const Dashboard: React.FC = () => {
                 </Card>
 
                 {/* Won Auctions */}
-                <Card title="Auctions Won" className="shadow-modern mb-4">
+                <Card title="Auctions Won" className="shadow-modern mb-4 py-4">
                     {wonAuctions.length > 0 ? (
                         <DataTable value={wonAuctions.slice(0, 3)} className="p-datatable-sm">
                             <Column body={wonAuctionsTemplate} header="Auction" />
@@ -295,7 +296,7 @@ const Dashboard: React.FC = () => {
                 </Card>
 
                 {/* User Info */}
-                <Card title="Account Information" className="shadow-modern">
+                <Card title="Account Information" className="shadow-modern py-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ml-1">
                         <div>
                             <p className="text-sm text-500">Name</p>
