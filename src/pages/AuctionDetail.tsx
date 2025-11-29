@@ -140,16 +140,11 @@ const AuctionDetail: React.FC = () => {
 
         try {
             setError('');
-            let result;
-
             if (hasUserBid && userExistingBid) {
-                // Update existing bid
-                result = await updateBid(userExistingBid._id, amount);
+                await updateBid(userExistingBid._id, amount);
             } else {
-                // Place new bid
-                result = await placeBid(id, amount);
+                await placeBid(id, amount);
 
-                // Emit bid event via socket
                 if (socket) {
                     socket.emit('bidPlaced', {
                         auctionId: id,

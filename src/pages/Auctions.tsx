@@ -97,7 +97,7 @@ const Auctions: React.FC = () => {
                 </div>
 
                 {/* Filters */}
-                <div className='auctionCard'>
+                <div className='auctionFilter'>
                     <Card className="shadow-modern mb-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-fluid">
                             <div>
@@ -150,7 +150,7 @@ const Auctions: React.FC = () => {
                         <p className="text-600">No auctions found matching your criteria.</p>
                     </div>
                 ) : (
-                    <div className="mt-6 ">
+                    <div className="mt-6 auctionCard">
                         {/* Custom Grid Layout */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 mb-6">
                             {auctions.slice(0, 12).map((auction: any) => (
@@ -178,7 +178,7 @@ const Auctions: React.FC = () => {
                                             />
                                         </div>
                                     </div>
-                                    <div className="py-4 text-start">
+                                    <div className="pt-4 text-start">
                                         <h3 className="text-lg font-semibold mb-2 line-clamp-1">{auction.title}</h3>
                                         <p className="text-sm text-600 mb-3 line-clamp-2">{auction.description}</p>
                                         <div className="flex justify-content-between align-items-center mb-2">

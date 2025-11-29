@@ -136,10 +136,16 @@ button {
 }
 
 .adminUsers,
-.auctionCard,
+.auctionFilter,
 .myProfile {
   .p-card .p-card-body {
     padding: 2.4rem 2.2rem;
+  }
+}
+
+.auctionCard {
+  .p-card .p-card-content {
+    padding: 0;
   }
 }
 
