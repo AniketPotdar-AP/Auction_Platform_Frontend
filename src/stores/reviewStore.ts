@@ -41,7 +41,7 @@ interface ReviewState {
     clearError: () => void;
 }
 
-export const useReviewStore = create<ReviewState>((set, get) => ({
+export const useReviewStore = create<ReviewState>((set) => ({
     reviews: [],
     userReviews: [],
     isLoading: false,

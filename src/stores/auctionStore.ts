@@ -51,7 +51,7 @@ interface AuctionState {
     clearError: () => void;
 }
 
-export const useAuctionStore = create<AuctionState>((set, get) => ({
+export const useAuctionStore = create<AuctionState>((set) => ({
     auctions: [],
     myAuctions: [],
     wonAuctions: [],

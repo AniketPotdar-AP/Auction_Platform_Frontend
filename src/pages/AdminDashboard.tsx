@@ -2,25 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { Card } from 'primereact/card';
 import { Chart } from 'primereact/chart';
-import { ShoppingCart, Trophy, DollarSign, Users, TrendingUp, UserCheck, Gavel } from 'lucide-react';
-
-interface User {
-    _id: string;
-    name: string;
-    email: string;
-    role: string;
-    verificationStatus: string;
-    createdAt: string;
-}
-
-interface Auction {
-    _id: string;
-    title: string;
-    seller: { name: string };
-    status: string;
-    isApproved: boolean;
-    createdAt: string;
-}
+import { Users, TrendingUp, UserCheck, Gavel } from 'lucide-react';
 
 const AdminDashboard: React.FC = () => {
     const { user } = useAuthStore();
@@ -32,7 +14,7 @@ const AdminDashboard: React.FC = () => {
         totalAuctions: 0
     });
     const [chartData, setChartData] = useState<any>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (user?.role === 'admin') {
@@ -91,52 +73,6 @@ const AdminDashboard: React.FC = () => {
             console.error('Error fetching dashboard data:', error);
         } finally {
             setIsLoading(false);
-        }
-    };
-
-    const handleVerifyAadhaar = async (userId: string, status: 'verified' | 'rejected', notes?: string) => {
-        try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/users/${userId}/verify-aadhaar`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify({ status, notes })
-            });
-
-            const data = await response.json();
-            if (data.success) {
-                alert(`Aadhaar ${status} successfully`);
-                fetchDashboardData(); // Refresh data
-            } else {
-                alert(data.message || 'Failed to verify Aadhaar');
-            }
-        } catch (error) {
-            console.error('Error verifying Aadhaar:', error);
-            alert('Failed to verify Aadhaar');
-        }
-    };
-
-    const handleApproveAuction = async (auctionId: string) => {
-        try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/auctions/${auctionId}/approve`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-
-            const data = await response.json();
-            if (data.success) {
-                alert('Auction approved successfully');
-                fetchDashboardData(); // Refresh data
-            } else {
-                alert(data.message || 'Failed to approve auction');
-            }
-        } catch (error) {
-            console.error('Error approving auction:', error);
-            alert('Failed to approve auction');
         }
     };
 

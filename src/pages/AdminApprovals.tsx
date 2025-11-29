@@ -16,7 +16,7 @@ interface Auction {
 const AdminApprovals: React.FC = () => {
     const { user } = useAuthStore();
     const [pendingAuctions, setPendingAuctions] = useState<Auction[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (user?.role === 'admin') {
@@ -65,7 +65,7 @@ const AdminApprovals: React.FC = () => {
         }
     };
 
-    const handleRejectAuction = async (auctionId: string) => {
+    const handleRejectAuction = async (_id: string) => {
         if (window.confirm('Are you sure you want to reject this auction?')) {
             try {
                 // For now, we'll just remove it from pending. In a real app, you'd have a reject endpoint

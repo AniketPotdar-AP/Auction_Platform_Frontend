@@ -9,7 +9,7 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
 import { Chart } from 'primereact/chart';
-import { ShoppingCart, Trophy, DollarSign, Users, TrendingUp } from 'lucide-react';
+import { ShoppingCart, Trophy, DollarSign, Users } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
     const { user } = useAuthStore();
@@ -17,7 +17,7 @@ const Dashboard: React.FC = () => {
     const { myBids, fetchMyBids } = useBidStore();
 
     const [activeUsers, setActiveUsers] = useState(0);
-    const [userStats, setUserStats] = useState({
+    const [, setUserStats] = useState({
         totalUsers: 0,
         verifiedUsers: 0,
         activeAuctions: 0,

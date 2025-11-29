@@ -29,7 +29,7 @@ interface BidState {
     clearError: () => void;
 }
 
-export const useBidStore = create<BidState>((set, get) => ({
+export const useBidStore = create<BidState>((set) => ({
     bids: [],
     myBids: [],
     activeBids: [],

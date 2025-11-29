@@ -13,7 +13,7 @@ interface User {
 const AdminVerifications: React.FC = () => {
     const { user } = useAuthStore();
     const [pendingVerifications, setPendingVerifications] = useState<User[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (user?.role === 'admin') {

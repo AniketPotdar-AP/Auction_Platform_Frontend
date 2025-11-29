@@ -111,7 +111,7 @@ const Profile: React.FC = () => {
         try {
             const formDataToSend = new FormData();
             formDataToSend.append('aadhaarNumber', aadhaarData.aadhaarNumber);
-            aadhaarData.aadhaarImages.forEach((file, index) => {
+            aadhaarData.aadhaarImages.forEach((file) => {
                 formDataToSend.append('images', file);
             });
 
